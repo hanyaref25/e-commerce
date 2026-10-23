@@ -74,9 +74,9 @@ export default function SignupHero() {
         </div>
         <blockquote>
           <p className="italic text-gray-600">
-            "FreshCart has transformed my shopping experience. The quality of
-            the products is outstanding, and the delivery is always on time.
-            Highly recommend!"
+            &ldquo;FreshCart has transformed my shopping experience. The quality
+            of the products is outstanding, and the delivery is always on time.
+            Highly recommend!&rdquo;
           </p>
         </blockquote>
       </div>

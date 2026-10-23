@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconUserPlus } from "@tabler/icons-react";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import signupSchema, { SignupFormData } from "@/src/featurs/auth/schemas/signup.schema";
 import { signupAction } from "@/src/featurs/auth/server/signup.action";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ export default function SignupForm() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormData>({
     defaultValues: {
@@ -58,17 +59,58 @@ export default function SignupForm() {
 
 
 
+  const password = useWatch({ control, name: "password" }) ?? "";
+
+  const passwordScore = [
+    password.length >= 8,
+    /[A-Z]/.test(password),
+    /[a-z]/.test(password),
+    /[0-9]/.test(password),
+    /[^A-Za-z0-9]/.test(password),
+  ].filter(Boolean).length;
+
+  const passwordStrength =
+    passwordScore >= 5
+      ? {
+          label: "Strong",
+          percent: 100,
+          barClass: "bg-emerald-500",
+          textClass: "text-emerald-600",
+        }
+      : passwordScore >= 4
+        ? {
+            label: "Good",
+            percent: 75,
+            barClass: "bg-amber-400",
+            textClass: "text-amber-600",
+          }
+        : passwordScore >= 2
+          ? {
+              label: "Fair",
+              percent: 50,
+              barClass: "bg-orange-500",
+              textClass: "text-orange-500",
+            }
+          : {
+              label: "Weak",
+              percent: 20,
+              barClass: "bg-red-500",
+              textClass: "text-red-500",
+            };
+
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-lg px-6 py-10">
-        <div className="mb-10">
-          <h2 className="text-center text-3xl font-semibold mb-2">
+      <div className="w-full bg-white rounded-2xl shadow-lg p-6 sm:p-8">
+        <div className="mb-8">
+          <h2 className="text-center text-2xl sm:text-3xl font-semibold mb-2">
             Create Your Account
           </h2>
-          <p className="text-center">Start your fresh journey with us today</p>
+          <p className="text-center text-sm sm:text-base">
+            Start your fresh journey with us today
+          </p>
         </div>
 
-        <form className="space-y-7" onSubmit={handleSubmit(onSubmit)}>
+        <form className="space-y-5 sm:space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-2">
             <label htmlFor="name">Name*</label>
             <input
@@ -97,7 +139,7 @@ export default function SignupForm() {
             )}
           </div>
 
-          <div className="flex bg-light flex-col gap-2">
+          <div className="flex flex-col gap-2">
             <label htmlFor="password">Password*</label>
             <input
               type="password"
@@ -111,14 +153,21 @@ export default function SignupForm() {
               <span className="text-red-500 text-sm">{errors.password.message}</span>
             )}
 
-            <div className="password-requirements">
-              <div className="flex items-center gap-2">
-                <div className="bar grow h-1 bg-gray-200 rounded-md overflow-hidden">
-                  <div className={`progress bg-orange-500 w-50 h-full`}></div>
+            {password.length > 0 && (
+              <div className="flex items-center gap-2 pt-1">
+                <div className="grow h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-300 ${passwordStrength.barClass}`}
+                    style={{ width: `${passwordStrength.percent}%` }}
+                  />
                 </div>
-                <span>Fair</span>
+                <span
+                  className={`text-xs font-semibold ${passwordStrength.textClass}`}
+                >
+                  {passwordStrength.label}
+                </span>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-2">
@@ -186,7 +235,7 @@ export default function SignupForm() {
           </button>
         </form>
 
-        <p className="border-t pt-10 border-gray-300/30 my-4 text-center">
+        <p className="border-t pt-6 border-gray-300/30 my-4 text-center">
           Already have an account?{" "}
           <Link href={`/login`} className="text-primary-600">
             Sign In
