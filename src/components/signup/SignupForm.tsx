@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IconUserPlus } from "@tabler/icons-react";
+import { IconEye, IconEyeOff, IconUserPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import { useForm, useWatch } from "react-hook-form";
 import signupSchema, { SignupFormData } from "@/src/featurs/auth/schemas/signup.schema";
@@ -11,6 +12,8 @@ import { useRouter } from "next/navigation";
 
 export default function SignupForm() {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showRePassword, setShowRePassword] = useState(false);
 
   const {
     register,
@@ -141,14 +144,29 @@ export default function SignupForm() {
 
           <div className="flex flex-col gap-2">
             <label htmlFor="password">Password*</label>
-            <input
-              type="password"
-              className="form-control"
-              placeholder="create a strong password"
-              autoComplete="off"
-              id="password"
-              {...register("password")}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="form-control w-full pr-10"
+                placeholder="create a strong password"
+                autoComplete="new-password"
+                id="password"
+                {...register("password")}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((visible) => !visible)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+              >
+                {showPassword ? (
+                  <IconEyeOff stroke={2} className="size-5" />
+                ) : (
+                  <IconEye stroke={2} className="size-5" />
+                )}
+              </button>
+            </div>
             {errors.password && (
               <span className="text-red-500 text-sm">{errors.password.message}</span>
             )}
@@ -172,14 +190,31 @@ export default function SignupForm() {
 
           <div className="flex flex-col gap-2">
             <label htmlFor="rePassword">Confirm Password*</label>
-            <input
-              type="password"
-              className="form-control"
-              placeholder="confirm your password"
-              autoComplete="off"
-              id="rePassword"
-              {...register("rePassword")}
-            />
+            <div className="relative">
+              <input
+                type={showRePassword ? "text" : "password"}
+                className="form-control w-full pr-10"
+                placeholder="confirm your password"
+                autoComplete="new-password"
+                id="rePassword"
+                {...register("rePassword")}
+              />
+              <button
+                type="button"
+                onClick={() => setShowRePassword((visible) => !visible)}
+                aria-label={
+                  showRePassword ? "Hide password" : "Show password"
+                }
+                aria-pressed={showRePassword}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+              >
+                {showRePassword ? (
+                  <IconEyeOff stroke={2} className="size-5" />
+                ) : (
+                  <IconEye stroke={2} className="size-5" />
+                )}
+              </button>
+            </div>
             {errors.rePassword && (
               <span className="text-red-500 text-sm">{errors.rePassword.message}</span>
             )}

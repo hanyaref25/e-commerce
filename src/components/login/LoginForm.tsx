@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconBrandFacebook,
   IconBrandGoogleFilled,
   IconEye,
+  IconEyeOff,
   IconLockFilled,
   IconMail,
   IconStarFilled,
@@ -24,6 +26,7 @@ import { setCredentials } from "@/src/featurs/auth/slices/auth.slice";
 export default function LoginForm() {
   const router = useRouter();
   const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -167,8 +170,9 @@ export default function LoginForm() {
             </div>
             <div className="relative">
               <input
-                type={"password"}
+                type={showPassword ? "text" : "password"}
                 id="password"
+                autoComplete="current-password"
                 className="w-full px-4 py-3 pl-12 pr-12 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-all"
                 placeholder="Enter your password"
                 {...register("password")}
@@ -177,9 +181,16 @@ export default function LoginForm() {
 
               <button
                 type="button"
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                onClick={() => setShowPassword((visible) => !visible)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
               >
-                <IconEye stroke={2} />
+                {showPassword ? (
+                  <IconEyeOff stroke={2} />
+                ) : (
+                  <IconEye stroke={2} />
+                )}
               </button>
             </div>
 
